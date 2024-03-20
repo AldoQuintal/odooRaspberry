@@ -183,9 +183,16 @@ def ProcesaEntrega():
         
         for entrega in entregas:
             print(entrega)
+            #Formateo de fecha Inicial y final 
+            fecha_ini =  datetime.datetime.strptime(entrega["fecha_ini"] , "%Y/%m/%d %H:%M:%S")
+            fecha_ini_format = datetime.datetime.strftime(fecha_ini, "%y%m%d%H%M")
+
+            fecha_fin = datetime.datetime.strptime(entrega["fecha_fin"], "%Y/%m/%d %H:%M:%S")
+            fecha_fin_format = datetime.datetime.strftime(fecha_fin, "%y%m%d%H%M")
+            
             query=f"""SELECT * FROM gsm_entregas WHERE vr_tanque = '{entrega['vr_tanque']}' and
-            fecha_ini = '{entrega['fecha_ini']}' and
-            fecha_fin = '{entrega['fecha_fin']}' and
+            fecha_ini = '{fecha_ini_format}' and
+            fecha_fin = '{fecha_fin_format}' and
             aum_neto = '{entrega['aum_neto']}' and
             aum_bruto = '{entrega['aum_bruto']}' """
             cur.execute(query)
