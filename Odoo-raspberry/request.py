@@ -11,8 +11,8 @@ PSQL_USER = "odoo"
 PSQL_PASS = "unkkuri-secret-pw"
 PSQL_DB   = "odoo"
 
-api_inv = 'http://10.10.2.208:8000/api/inventarios'
-api_entr = 'http://10.10.2.208:8000/api/entregas'
+api_inv = 'http://localhost:8000/api/inventarios'
+api_entr = 'http://localhost:8000/api/entregas'
 
 _LOGGER = logging.getLogger(__name__)
 
