@@ -193,8 +193,8 @@ def ProcesaEntrega():
             query=f"""SELECT * FROM gsm_entregas WHERE vr_tanque = '{entrega['vr_tanque']}' and
             fecha_ini = '{fecha_ini_format}' and
             fecha_fin = '{fecha_fin_format}' and
-            aum_neto = '{entrega['aum_neto']}' and
-            aum_bruto = '{entrega['aum_bruto']}' """
+            aum_bruto = '{entrega['aum_neto']}' and
+            aum_neto = '{entrega['aum_bruto']}' """
             cur.execute(query)
             print(query)
             entrega_valida = cur.fetchone() 
