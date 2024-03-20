@@ -11,8 +11,8 @@ PSQL_USER = "odoo"
 PSQL_PASS = "unkkuri-secret-pw"
 PSQL_DB   = "odoo"
 
-api_inv = 'http://localhost:8000/api/inventarios'
-api_entr = 'http://localhost:8000/api/entregas'
+api_inv = 'http://10.10.2.208:8000/api/inventarios'
+api_entr = 'http://10.10.2.208:8000/api/entregas'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ def ProcesaInventario():
                         print(f'Hora: {hora}')
                         hora_actual = datetime.datetime.now().hour
                         print(f'Hora actual: {hora_actual}')
-                        if int(hora_actual) != hora:
+                        if int(hora_actual) == hora:
                             query = f"""UPDATE gsm_tanques SET entr_hoy = '{hora_actual}' WHERE vr_tanque = '{b["vr_tanque"]}'"""
                             cur.execute(query)
                             conn.commit()
@@ -110,6 +110,13 @@ def ProcesaInventario():
                             # Vol Util
                             vol_util = float(b['vr_volumen']) - float(vol_fond)
 
+                            vol_extr = 0.0 + float(b['vol_ant']) - float(b'vr_volumen')
+
+                            if vol_extr < 0.0:
+                                vol_extr = vol_extr * (-1)
+                            
+                            volumen_extr = "{:012.3f}".format(vol_extr)
+
                             # Recupera turno
                             query = "SELECT id as turno_actual FROM gsm_turnos where estado='A' order by id desc"
                             cur.execute(query)
@@ -119,6 +126,7 @@ def ProcesaInventario():
                             else:
                                 turno = ""
                             
+
 
                             #Valores a insertar 
                             print(f'Create date: {datetime.datetime.now()}')
@@ -140,6 +148,7 @@ def ProcesaInventario():
                             print(f'Turno: {turno}')
                             print(f'Vol_ct: {b["vr_vol_ct"]}')
                             print(f'Clave_tanque: {clave_tanque}')
+                            print(f'Volumen_extra: {volumen_extr}')
 
                             query = f"""INSERT INTO gsm_existencias (create_date, write_date, rfc,clave,tanque,clv_prd,vol_util,vol_fond,vol_agua,vol_dispon,vol_extr,vol_recep,temp,med_ant,med_act,fecha,turno,vol_ct,clave_tanque) VALUES 
                             ('{datetime.datetime.now()}', '{datetime.datetime.now()}', '{rfc}', '{siic}', '{b["vr_tanque"]}', '{clave_prd}', '{vol_util}', '{vol_fond}', '{b["vr_agua"]}', '{b["vr_volumen"]}', '111', '0.00', '{b["vr_temp"]}', 'anterior', 'fecha?', '{datetime.datetime.now().strftime("%Y-%m-%d %H:%m:%S")}', '{turno}', '{b["vr_vol_ct"]}', '{clave_tanque}' )"""
