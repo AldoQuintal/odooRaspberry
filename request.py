@@ -193,6 +193,7 @@ def ProcesaEntrega():
             entrega_valida = cur.fetchall() 
             print(f'valida_entrega: {entrega_valida}')
             if not entrega_valida:
+                print("Hay una entrega nueva ..................")
 
                 query = "SELECT clave_medicion FROM gsm_medicion WHERE tanque_id = {} and clave_medicion LIKE 'SMD%'".format(entrega['vr_tanque'])
                 cur.execute(query)
@@ -235,6 +236,8 @@ def ProcesaEntrega():
                 print(query)
                 cur.execute(query)
                 conn.commit()
+            else:
+                print("No Hay entregas nuevas ...............")
 
     except Exception as ex:
         print("Error Entregas")
