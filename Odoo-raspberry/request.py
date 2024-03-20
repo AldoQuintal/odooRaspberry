@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 def FSM_Core():
     
     ProcesaInventario()
-    #ProcesaEntrega()
+    ProcesaEntrega()
     
 
 
@@ -190,11 +190,48 @@ def ProcesaEntrega():
             aum_bruto = '{entrega['aum_bruto']}' """
             cur.execute(query)
             print(query)
-            entrega_valida = cur.fetchone() 
+            entrega_valida = cur.fetchall() 
             print(f'valida_entrega: {entrega_valida}')
             if not entrega_valida:
-                query = f"""INSERT INTO gsm_entregas (vr_tanque, fecha_ini, fecha_fin, vol_ini, vol_fin, vol_ct_ini, vol_ct_fin, agua_ini, agua_fin, temp_ini, temp_fin, aum_bruto, aum_neto, clv_prd)
-                VALUES ('{entrega['vr_tanque']}', '{entrega['fecha_ini']}', '{entrega['fecha_fin']}', '{entrega['vol_ini']}', '{entrega['vol_fin']}', '{entrega['vol_ct_ini']}', '{entrega['vol_ct_fin']}', '{entrega['agua_ini']}', '{entrega['agua_fin']}', '{entrega['temp_ini']}', '{entrega['temp_fin']}', '{entrega['aum_bruto']}', '{entrega['aum_neto']}', '{entrega['clv_prd']}')"""
+
+                query = "SELECT clave_medicion FROM gsm_medicion WHERE tanque_id = {} and clave_medicion LIKE 'SMD%'".format(entrega['vr_tanque'])
+                cur.execute(query)
+                clave_smd = cur.fetchone()
+                print(f'Clave_smd: {clave_smd}')
+
+                #Se recupera la clave_medicion SME
+                query = "SELECT clave_medicion FROM gsm_medicion WHERE tanque_id = {} and clave_medicion LIKE 'SME%'".format(entrega['vr_tanque'])
+                cur.execute(query)
+                clave_sme = cur.fetchone()
+                print(f'Clave_sme: {clave_sme}')
+
+                #Se obtiene la clave de indentificacion partiendo de la clave_producto
+                query = "SELECT clave_identificacion FROM gsm_combustibles WHERE clave_producto = (SELECT clv_prd FROM gsm_tanques WHERE vr_tanque = '{}')".format(entrega['vr_tanque'])
+                cur.execute(query)
+                clv_iden = cur.fetchone()
+                print(f'clv_iden: {clv_iden}')
+
+                #Se obtiene la clave de tanque
+                query = "SELECT clave_tanque, combustible_id, vr_codigo FROM gsm_tanques WHERE vr_tanque = '{0}'".format(entrega['vr_tanque'])
+                cur.execute(query)
+                clave_tanque = cur.fetchone()
+                print(f'Clave_tanque: {clave_tanque}')
+
+                # Se obtiene el RFC
+                query = "SELECT rfc, clave_siic FROM res_company LIMIT 1"
+                cur.execute(query)
+                rfc = cur.fetchone()
+
+                #Formateo de fecha Inicial y final 
+                fecha_ini =  datetime.datetime.strptime(entrega["fecha_ini"] , "%Y/%m/%d %H:%M:%S")
+                fecha_ini_format = datetime.datetime.strftime(fecha_ini, "%y%m%d%H%M")
+
+                fecha_fin = datetime.datetime.strptime(entrega["fecha_fin"], "%Y/%m/%d %H:%M:%S")
+                fecha_fin_format = datetime.datetime.strftime(fecha_fin, "%y%m%d%H%M")
+                
+
+                query = f"""INSERT INTO gsm_entregas (vr_tanque, fecha_ini, fecha_fin, vol_ini, vol_fin, vol_ct_ini, vol_ct_fin, agua_ini, agua_fin, temp_ini, temp_fin, aum_bruto, aum_neto, clv_prd, clave_medicion_sme, tipo_combustible, clave_medicion_smd, clave_tanque, rfc, combustible_id, vr_codigo)
+                VALUES ('{entrega['vr_tanque']}', '{fecha_ini_format}', '{fecha_fin_format}', '{entrega['vol_ini']}', '{entrega['vol_fin']}', '{entrega['vol_ct_ini']}', '{entrega['vol_ct_fin']}', '{entrega['agua_ini']}', '{entrega['agua_fin']}', '{entrega['temp_ini']}', '{entrega['temp_fin']}', '{entrega['aum_neto']}', '{entrega['aum_bruto']}', '{entrega['clv_prd']}', '{clave_sme[0]}', '{clv_iden[0]}', '{clave_smd[0]}', '{clave_tanque[0]}', '{rfc[0]}', '{clave_tanque[1]}', '{clave_tanque[2]}')"""
                 print(query)
                 cur.execute(query)
                 conn.commit()
