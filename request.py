@@ -190,9 +190,9 @@ def ProcesaEntrega():
             aum_bruto = '{entrega['aum_bruto']}' """
             cur.execute(query)
             print(query)
-            entrega_valida = cur.fetchall() 
+            entrega_valida = cur.fetchone() 
             print(f'valida_entrega: {entrega_valida}')
-            if entrega_valida == None:
+            if not entrega_valida == []:
                 print("Hay una entrega nueva ..................")
 
                 query = "SELECT clave_medicion FROM gsm_medicion WHERE tanque_id = {} and clave_medicion LIKE 'SMD%'".format(entrega['vr_tanque'])
