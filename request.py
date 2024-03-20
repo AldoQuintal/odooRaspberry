@@ -246,6 +246,8 @@ def ProcesaEntrega():
                 conn.commit()
             else:
                 print("No Hay entregas nuevas ...............")
+        
+        conn.close()
 
     except Exception as ex:
         print("Error Entregas")
