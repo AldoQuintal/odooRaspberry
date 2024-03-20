@@ -3,6 +3,7 @@ import datetime
 import requests
 import logging
 import json
+import pytz
 
 #  Configurar la conexion a PostgresSQL
 PSQL_HOST = "10.10.2.246"
@@ -156,9 +157,9 @@ def ProcesaInventario():
                             print(f'Clave_tanque: {clave_tanque}')
                             print(f'Volumen_extra: {volumen_extr}')
                             print(f'Fecha: {fecha}')
-
+                            
                             query = f"""INSERT INTO gsm_existencias (create_date, write_date, rfc,clave,tanque,clv_prd,vol_util,vol_fond,vol_agua,vol_dispon,vol_extr,vol_recep,temp,med_ant,med_act,fecha,turno,vol_ct,clave_tanque) VALUES 
-                            ('{datetime.datetime.now()}', '{datetime.datetime.now()}', '{rfc}', '{siic}', '{b["vr_tanque"]}', '{clave_prd}', '{vol_util}', '{vol_fond}', '{b["vr_agua"]}', '{b["vr_volumen"]}', '{volumen_extr}', '0.00', '{b["vr_temp"]}', '', '', '{datetime.datetime.now().strftime("%Y%m%d%H%M")}', '{turno}', '{b["vr_vol_ct"]}', '{clave_tanque}' )"""
+                            ('{datetime.datetime.now()}', '{datetime.datetime.now()}', '{rfc}', '{siic}', '{b["vr_tanque"]}', '{clave_prd}', '{vol_util}', '{vol_fond}', '{b["vr_agua"]}', '{b["vr_volumen"]}', '{volumen_extr}', '0.00', '{b["vr_temp"]}', '', '', '{datetime.datetime.now(pytz.timezone('america/mexico_city')).strftime("%Y%m%d%H%M")}', '{turno}', '{b["vr_vol_ct"]}', '{clave_tanque}' )"""
                             print(query)
                             cur.execute(query)
                             conn.commit()
