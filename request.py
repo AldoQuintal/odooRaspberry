@@ -64,8 +64,8 @@ def ProcesaInventario():
                             hora = 0
                         
                         print(f'Hora: {hora}')
-                        hora_actual = datetime.datetime.now().hour
-                        minutos = datetime.datetime.now().minute
+                        hora_actual = datetime.datetime.now(pytz.timezone('america/mexico_city')).hour
+                        minutos = datetime.datetime.now(pytz.timezone('america/mexico_city')).minute
                         print(f'Minutos actuales ...... {minutos}')
                         print(f'Hora actual: {hora_actual}')
                         if int(hora_actual) != hora or hora_actual == 14 and minutos == 28:
