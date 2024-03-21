@@ -68,7 +68,7 @@ def ProcesaInventario():
                         minutos = datetime.datetime.now().minute
                         print(f'Minutos actuales ...... {minutos}')
                         print(f'Hora actual: {hora_actual}')
-                        if int(hora_actual) != hora or hora_actual == 14 and minutos == 25:
+                        if int(hora_actual) != hora or hora_actual == 14 and minutos == 28:
                             query = f"""UPDATE gsm_tanques SET entr_hoy = '{hora_actual}' WHERE vr_tanque = '{b["vr_tanque"]}'"""
                             cur.execute(query)
                             conn.commit()
